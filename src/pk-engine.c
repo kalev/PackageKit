@@ -1071,6 +1071,22 @@ pk_engine_offline_get_property (GDBusConnection *connection_, const gchar *sende
 		return g_variant_new_boolean (g_strcmp0 (link, PK_OFFLINE_PREPARED_UPGRADE_FILENAME) == 0);
 	}
 
+	if (g_strcmp0 (property_name, "PreparedUpgradeName") == 0) {
+		g_autofree gchar *name = NULL;
+		name = pk_offline_get_prepared_upgrade_name (error);
+		if (name == NULL)
+			return NULL;
+		return g_variant_new_string (name);
+	}
+
+	if (g_strcmp0 (property_name, "PreparedUpgradeVersion") == 0) {
+		g_autofree gchar *version = NULL;
+		version = pk_offline_get_prepared_upgrade_version (error);
+		if (version == NULL)
+			return NULL;
+		return g_variant_new_string (version);
+	}
+
 	/* return an error */
 	g_set_error (error,
 		     PK_ENGINE_ERROR,
@@ -1568,6 +1584,8 @@ pk_engine_offline_helper_cb (GObject *source, GAsyncResult *res, gpointer user_d
 	PkOfflineAction action;
 	gboolean ret;
 	g_autofree gchar *link = NULL;
+	g_autofree gchar *name = NULL;
+	g_autofree gchar *version = NULL;
 	g_autoptr(GError) error = NULL;
 	g_autoptr(GFile) file = NULL;
 	g_autoptr(PolkitAuthorizationResult) result = NULL;
@@ -1632,6 +1650,16 @@ pk_engine_offline_helper_cb (GObject *source, GAsyncResult *res, gpointer user_d
 	pk_engine_emit_offline_property_changed (helper->engine,
 						 "UpgradeTriggered",
 						 g_variant_new_boolean (g_strcmp0 (link, PK_OFFLINE_PREPARED_UPGRADE_FILENAME) == 0));
+
+	name = pk_offline_get_prepared_upgrade_name (NULL);
+	pk_engine_emit_offline_property_changed (helper->engine,
+						 "PreparedUpgradeName",
+						 g_variant_new_string (name != NULL ? name : ""));
+
+	version = pk_offline_get_prepared_upgrade_version (NULL);
+	pk_engine_emit_offline_property_changed (helper->engine,
+						 "PreparedUpgradeVersion",
+						 g_variant_new_string (version != NULL ? version : ""));
 
 	g_dbus_method_invocation_return_value (helper->invocation, NULL);
 	pk_engine_offline_helper_free (helper);

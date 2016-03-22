@@ -319,24 +319,26 @@ pk_offline_auth_set_prepared_ids (gchar **package_ids, GError **error)
 }
 
 /**
- * pk_offline_auth_set_prepared_upgrade_version:
+ * pk_offline_auth_set_prepared_upgrade:
+ * @name: Distro name to upgrade to
  * @release_ver: Distro version to upgrade to
  * @error: A #GError or %NULL
  *
- * Saves the distro version to upgrade to a prepared transaction file.
+ * Saves the distro name and version to upgrade to a prepared transaction file.
  *
  * Return value: %TRUE for success, else %FALSE and @error set
  *
- * Since: 1.0.12
+ * Since: 1.1.1
  **/
 gboolean
-pk_offline_auth_set_prepared_upgrade_version (const gchar *release_ver, GError **error)
+pk_offline_auth_set_prepared_upgrade (const gchar *name, const gchar *release_ver, GError **error)
 {
 	g_autoptr(GKeyFile) keyfile = NULL;
 
 	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
 	keyfile = g_key_file_new ();
+	g_key_file_set_string (keyfile, "update", "name", name);
 	g_key_file_set_string (keyfile, "update", "releasever", release_ver);
 	return g_key_file_save_to_file (keyfile, PK_OFFLINE_PREPARED_UPGRADE_FILENAME, error);
 }

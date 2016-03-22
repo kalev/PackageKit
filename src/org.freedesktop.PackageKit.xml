@@ -555,6 +555,28 @@
     </property>
 
     <!--*********************************************************************-->
+    <property name="PreparedUpgradeName" type="s" access="read">
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+            The distro name for currently prepared system upgrade.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+
+    <!--*********************************************************************-->
+    <property name="PreparedUpgradeVersion" type="s" access="read">
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+            The distro version for currently prepared system upgrade.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </property>
+
+    <!--*********************************************************************-->
     <property name="TriggerAction" type="s" access="read">
       <doc:doc>
         <doc:description>
